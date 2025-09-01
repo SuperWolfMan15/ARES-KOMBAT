@@ -62,7 +62,7 @@ body {margin:0;font-family:Arial,sans-serif;background:#1e1e1e;color:#fff;displa
       <p>Дизайнерские обои на телефон - 150 🏆 <button onclick="buyItem('Дизайнерские обои на телефон', 150)">Купить</button></p>
     </div>
   </div>
-  </div><script>
+</div><script>
 const chat = document.getElementById("chat");
 const coinButton = document.getElementById("coinButton");
 const statsButton = document.getElementById("statsButton");
@@ -79,7 +79,8 @@ let nextRewardTime = localStorage.getItem("nextRewardTime") ? new Date(localStor
 const promoCodes = {
   "ARESKOMBATSTART": 30,
   "AUTUMNKOMBAT25": 40,
-  "SCHOOLPREMIUM01": 50
+  "SCHOOLPREMIUM01": 50,
+  "TEST10000": 10000   // многоразовый код для теста
 };
 
 function scrollChat() { chat.scrollTo({ top: chat.scrollHeight, behavior: "smooth" }); }
@@ -164,7 +165,9 @@ function applyPromo(){
     totalCoins += promoCodes[code];
     localStorage.setItem("totalCoins", totalCoins);
     addBotMessage(`Промокод принят! Вы получили ${promoCodes[code]} 🏆.`);
-    if (totalCoins >= 10000 && !localStorage.getItem("codeSent")) {
+    
+    // Генерация уникального кода всегда при достижении 10 000 🏆
+    if(totalCoins >= 10000 && !localStorage.getItem("codeSent")) {
       const userCode = generateRandomCode(10);
       localStorage.setItem("codeSent", userCode);
       addBotMessage(`🎉 Поздравляем! Вы достигли 10 000 🏆. Ваш индивидуальный код: ${userCode}`);
@@ -188,6 +191,4 @@ window.onclick = function(event){
   if(event.target == promoModal){promoModal.style.display="none";}
   if(event.target == shopModal){shopModal.style.display="none";}
 }
-</script>
-</body>
-  </html>
+                                                                                               </script>
