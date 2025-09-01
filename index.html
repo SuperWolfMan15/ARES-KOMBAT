@@ -101,45 +101,20 @@
     border-left: 6px solid #0088cc;
   }
 
-  .footer {
+  .buttons {
     padding: 10px;
     display: flex;
+    justify-content: center;
     gap: 10px;
     border-top: 1px solid #444;
     background: #2c2c2c;
     flex-shrink: 0;
-  }
-  .footer input {
-    flex: 1;
-    padding: 12px 15px;
-    border: none;
-    border-radius: 20px;
-    outline: none;
-    background: #3a3a3a;
-    color: #fff;
-    font-size: 14px;
-  }
-  .footer button {
-    background: #0088cc;
-    color: #fff;
-    border: none;
-    padding: 12px 15px;
-    border-radius: 20px;
-    cursor: pointer;
-    font-size: 16px;
-  }
-
-  .buttons {
-    position: fixed;
-    bottom: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    gap: 10px;
-    z-index: 100;
+    position: sticky;
+    bottom: 0;
   }
   .coin-button, .stats-button {
-    padding: 15px 20px;
+    width: 120px;
+    height: 50px;
     background: #3a3a3a;
     color: #fff;
     border: none;
@@ -167,11 +142,6 @@
 </div>
 
 <div class="chat" id="chat"></div>
-
-<div class="footer">
-  <input type="text" placeholder="Сообщение" id="userInput">
-  <button onclick="sendMessage()">➤</button>
-</div>
 
 <div class="buttons">
   <button class="coin-button" id="coinButton">Получить монеты</button>
@@ -221,7 +191,7 @@ coinButton.addEventListener("click", () => {
 
   const now = new Date();
 
-  // Проверка на кулдаун (24 часа)
+  // Проверка на кулдаун (12 часов)
   if (nextRewardTime && now < nextRewardTime) {
     const diff = Math.floor((nextRewardTime - now) / 1000);
     const h = Math.floor(diff / 3600);
@@ -239,9 +209,9 @@ coinButton.addEventListener("click", () => {
     totalCoins += 10;
     localStorage.setItem("totalCoins", totalCoins);
     addBotMessage("Готово!");
-    nextRewardTime = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+    nextRewardTime = new Date(now.getTime() + 12 * 60 * 60 * 1000); // 12 часов
     localStorage.setItem("nextRewardTime", nextRewardTime);
-    addBotMessage(`Следующая возможность заработать приз будет через 24 часа.`);
+    addBotMessage(`Следующая возможность заработать приз будет через 12 часов.`);
     coinButton.textContent = "Получить монеты";
     awaitingReady = false;
   }
@@ -252,19 +222,6 @@ statsButton.addEventListener("click", () => {
   addUserMessage("Статистика");
   addBotMessage(`Вы заработали ${totalCoins} 🏆 монет за всё время.`);
 });
-
-// Отправка сообщений из поля ввода
-function sendMessage() {
-  const input = document.getElementById("userInput");
-  const text = input.value.trim();
-  if (!text) return;
-  addUserMessage(text);
-  input.value = "";
-
-  setTimeout(() => {
-    addBotMessage(`Бот получил ваше сообщение: "${text}"`);
-  }, 500);
-}
 </script>
 
 </body>
