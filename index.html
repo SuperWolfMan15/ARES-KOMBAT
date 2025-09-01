@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARES KOMBAT от WolfiX</title>
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #1e1e1e;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .header {
+    background: #2c2c2c;
+    color: #fff;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #444;
+    flex-shrink: 0;
+  }
+  .header .avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #0088cc;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin-right: 10px;
+    font-size: 18px;
+  }
+  .header .info {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .chat {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    background: #1e1e1e;
+  }
+  .msg {
+    max-width: 70%;
+    padding: 10px 14px;
+    margin: 5px 0;
+    border-radius: 18px;
+    word-wrap: break-word;
+    line-height: 1.4;
+    font-size: 14px;
+    position: relative;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: fadeIn 0.3s forwards;
+  }
+  @keyframes fadeIn {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .bot {
+    background: #2f2f2f;
+    align-self: flex-start;
+    border-top-left-radius: 0;
+  }
+  .bot::before {
+    content: '';
+    position: absolute;
+    left: -6px;
+    top: 10px;
+    width: 0;
+    height: 0;
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+    border-right: 6px solid #2f2f2f;
+  }
+  .user {
+    background: #0088cc;
+    color: #fff;
+    align-self: flex-end;
+    border-top-right-radius: 0;
+  }
+  .user::after {
+    content: '';
+    position: absolute;
+    right: -6px;
+    top: 10px;
+    width: 0;
+    height: 0;
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+    border-left: 6px solid #0088cc;
+  }
+
+  .footer {
+    padding: 10px;
+    display: flex;
+    gap: 10px;
+    border-top: 1px solid #444;
+    background: #2c2c2c;
+    flex-shrink: 0;
+  }
+  .footer input {
+    flex: 1;
+    padding: 12px 15px;
+    border: none;
+    border-radius: 20px;
+    outline: none;
+    background: #3a3a3a;
+    color: #fff;
+    font-size: 14px;
+  }
+  .footer button {
+    background: #0088cc;
+    color: #fff;
+    border: none;
+    padding: 12px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+
+  .coin-button {
+    position: fixed;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 180px;
+    padding: 15px 0;
+    background: #3a3a3a;
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    cursor: pointer;
+    text-align: center;
+    z-index: 100;
+  }
+
+  .link {
+    color: #0088cc;
+    cursor: pointer;
+    text-decoration: none;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="avatar">A</div>
+  <div class="info">
+    <strong>Ares Kombat</strong>
+    <small>bot</small>
+  </div>
+</div>
+
+<div class="chat" id="chat"></div>
+
+<div class="footer">
+  <input type="text" placeholder="Сообщение" id="userInput">
+  <button onclick="sendMessage()">➤</button>
+</div>
+
+<button class="coin-button" id="coinButton">Получить монеты</button>
+
+<script>
+const chat = document.getElementById("chat");
+const coinButton = document.getElementById("coinButton");
+
+function addBotMessage(text) {
+  const msg = document.createElement("div");
+  msg.className = "msg bot";
+  msg.innerHTML = text;
+  chat.appendChild(msg);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function addUserMessage(text) {
+  const msgUser = document.createElement("div");
+  msgUser.className = "msg user";
+  msgUser.textContent = text;
+  chat.appendChild(msgUser);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+// Приветствие
+window.onload = () => {
+  addBotMessage(`Поздравляем! Вы подписались на ARES KOMBAT. Используйте <span class="link">/off</span> чтобы отменить подписку.`);
+  addBotMessage(`Хотите создать своего бота? Вам сюда: <span class="link">@Manybot</span>`);
+}
+
+let awaitingReady = false;
+
+coinButton.addEventListener("click", () => {
+  // Добавляем сообщение от пользователя с текстом кнопки
+  addUserMessage(coinButton.textContent);
+
+  if (!awaitingReady) {
+    addBotMessage(`Вы получили 10 монет! Нажмите на кнопку "Готово", чтобы их получить.`);
+    coinButton.textContent = "Готово";
+    awaitingReady = true;
+  } else {
+    addBotMessage("Готово!");
+    addBotMessage(`Создано с помощью <span class="link">@Manybot</span>`);
+    coinButton.textContent = "Получить монеты";
+    awaitingReady = false;
+  }
+});
+
+// Отправка сообщений из поля ввода
+function sendMessage() {
+  const input = document.getElementById("userInput");
+  const text = input.value.trim();
+  if (!text) return;
+  addUserMessage(text);
+  input.value = "";
+
+  setTimeout(() => {
+    addBotMessage(`Бот получил ваше сообщение: "${text}"`);
+  }, 500);
+}
+</script>
+
+</body>
+</html>
