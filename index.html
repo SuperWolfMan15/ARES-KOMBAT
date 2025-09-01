@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ARES KOMBAT от WolfiX</title>
+<title>Ares Kombat. Return</title>
 <style>
   body {
     margin: 0;
@@ -129,13 +129,17 @@
     font-size: 16px;
   }
 
-  .coin-button {
+  .buttons {
     position: fixed;
     bottom: 10px;
     left: 50%;
     transform: translateX(-50%);
-    width: 180px;
-    padding: 15px 0;
+    display: flex;
+    gap: 10px;
+    z-index: 100;
+  }
+  .coin-button, .stats-button {
+    padding: 15px 20px;
     background: #3a3a3a;
     color: #fff;
     border: none;
@@ -143,7 +147,6 @@
     font-size: 16px;
     cursor: pointer;
     text-align: center;
-    z-index: 100;
   }
 
   .link {
@@ -170,18 +173,33 @@
   <button onclick="sendMessage()">➤</button>
 </div>
 
-<button class="coin-button" id="coinButton">Получить монеты</button>
+<div class="buttons">
+  <button class="coin-button" id="coinButton">Получить монеты</button>
+  <button class="stats-button" id="statsButton">Статистика</button>
+</div>
 
 <script>
 const chat = document.getElementById("chat");
 const coinButton = document.getElementById("coinButton");
+const statsButton = document.getElementById("statsButton");
+
+let totalCoins = parseInt(localStorage.getItem("totalCoins")) || 0;
+let awaitingReady = false;
+let nextRewardTime = localStorage.getItem("nextRewardTime") ? new Date(localStorage.getItem("nextRewardTime")) : null;
+
+function scrollChat() {
+  chat.scrollTo({
+    top: chat.scrollHeight,
+    behavior: "smooth"
+  });
+}
 
 function addBotMessage(text) {
   const msg = document.createElement("div");
   msg.className = "msg bot";
   msg.innerHTML = text;
   chat.appendChild(msg);
-  chat.scrollTop = chat.scrollHeight;
+  scrollChat();
 }
 
 function addUserMessage(text) {
@@ -189,7 +207,7 @@ function addUserMessage(text) {
   msgUser.className = "msg user";
   msgUser.textContent = text;
   chat.appendChild(msgUser);
-  chat.scrollTop = chat.scrollHeight;
+  scrollChat();
 }
 
 // Приветствие
@@ -198,22 +216,41 @@ window.onload = () => {
   addBotMessage(`Хотите создать своего бота? Вам сюда: <span class="link">@Manybot</span>`);
 }
 
-let awaitingReady = false;
-
 coinButton.addEventListener("click", () => {
-  // Добавляем сообщение от пользователя с текстом кнопки
   addUserMessage(coinButton.textContent);
 
+  const now = new Date();
+
+  // Проверка на кулдаун (24 часа)
+  if (nextRewardTime && now < nextRewardTime) {
+    const diff = Math.floor((nextRewardTime - now) / 1000);
+    const h = Math.floor(diff / 3600);
+    const m = Math.floor((diff % 3600) / 60);
+    const s = diff % 60;
+    addBotMessage(`Следующая возможность заработать будет через ${h} ч ${m} мин ${s} сек`);
+    return;
+  }
+
   if (!awaitingReady) {
-    addBotMessage(`Вы получили 10 монет! Нажмите на кнопку "Готово", чтобы их получить.`);
+    addBotMessage(`Вы получили 10 🏆 монет! Нажмите на кнопку "Готово", чтобы их получить.`);
     coinButton.textContent = "Готово";
     awaitingReady = true;
   } else {
+    totalCoins += 10;
+    localStorage.setItem("totalCoins", totalCoins);
     addBotMessage("Готово!");
-    addBotMessage(`Создано с помощью <span class="link">@Manybot</span>`);
+    nextRewardTime = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+    localStorage.setItem("nextRewardTime", nextRewardTime);
+    addBotMessage(`Следующая возможность заработать приз будет через 24 часа.`);
     coinButton.textContent = "Получить монеты";
     awaitingReady = false;
   }
+});
+
+// Статистика
+statsButton.addEventListener("click", () => {
+  addUserMessage("Статистика");
+  addBotMessage(`Вы заработали ${totalCoins} 🏆 монет за всё время.`);
 });
 
 // Отправка сообщений из поля ввода
@@ -231,4 +268,4 @@ function sendMessage() {
 </script>
 
 </body>
-</html>
+    </html>
