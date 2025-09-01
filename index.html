@@ -5,130 +5,23 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ares Kombat. Return</title>
 <style>
-  body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: #1e1e1e;
-    color: #fff;
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    overflow: hidden;
-  }
-
-  .header {
-    background: #2c2c2c;
-    color: #fff;
-    padding: 10px;
-    display: flex;
-    align-items: center;
-    border-bottom: 1px solid #444;
-    flex-shrink: 0;
-  }
-  .header .avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: #0088cc;
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    margin-right: 10px;
-    font-size: 18px;
-  }
-  .header .info {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .chat {
-    flex: 1;
-    padding: 15px;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    background: #1e1e1e;
-  }
-  .msg {
-    max-width: 70%;
-    padding: 10px 14px;
-    margin: 5px 0;
-    border-radius: 18px;
-    word-wrap: break-word;
-    line-height: 1.4;
-    font-size: 14px;
-    position: relative;
-    opacity: 0;
-    transform: translateY(10px);
-    animation: fadeIn 0.3s forwards;
-  }
-  @keyframes fadeIn {
-    to { opacity: 1; transform: translateY(0); }
-  }
-  .bot {
-    background: #2f2f2f;
-    align-self: flex-start;
-    border-top-left-radius: 0;
-  }
-  .bot::before {
-    content: '';
-    position: absolute;
-    left: -6px;
-    top: 10px;
-    width: 0;
-    height: 0;
-    border-top: 8px solid transparent;
-    border-bottom: 8px solid transparent;
-    border-right: 6px solid #2f2f2f;
-  }
-  .user {
-    background: #0088cc;
-    color: #fff;
-    align-self: flex-end;
-    border-top-right-radius: 0;
-  }
-  .user::after {
-    content: '';
-    position: absolute;
-    right: -6px;
-    top: 10px;
-    width: 0;
-    height: 0;
-    border-top: 8px solid transparent;
-    border-bottom: 8px solid transparent;
-    border-left: 6px solid #0088cc;
-  }
-
-  .buttons {
-    padding: 10px;
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    border-top: 1px solid #444;
-    background: #2c2c2c;
-    flex-shrink: 0;
-    position: sticky;
-    bottom: 0;
-  }
-  .coin-button, .stats-button {
-    width: 120px;
-    height: 50px;
-    background: #3a3a3a;
-    color: #fff;
-    border: none;
-    border-radius: 12px;
-    font-size: 16px;
-    cursor: pointer;
-    text-align: center;
-  }
-
-  .link {
-    color: #0088cc;
-    cursor: pointer;
-    text-decoration: none;
-  }
+body {margin:0;font-family:Arial,sans-serif;background:#1e1e1e;color:#fff;display:flex;flex-direction:column;height:100vh;overflow:hidden;}
+.header {background:#2c2c2c;color:#fff;padding:10px;display:flex;align-items:center;border-bottom:1px solid #444;flex-shrink:0;}
+.header .avatar {width:40px;height:40px;border-radius:50%;background:#0088cc;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:bold;margin-right:10px;font-size:18px;}
+.header .info {display:flex;flex-direction:column;}
+.chat {flex:1;padding:15px;overflow-y:auto;display:flex;flex-direction:column;background:#1e1e1e;}
+.msg {max-width:70%;padding:10px 14px;margin:5px 0;border-radius:18px;word-wrap:break-word;line-height:1.4;font-size:14px;position:relative;opacity:0;transform:translateY(10px);animation:fadeIn 0.3s forwards;}
+@keyframes fadeIn {to{opacity:1;transform:translateY(0);}}
+.bot {background:#2f2f2f;align-self:flex-start;border-top-left-radius:0;}
+.bot::before {content:'';position:absolute;left:-6px;top:10px;width:0;height:0;border-top:8px solid transparent;border-bottom:8px solid transparent;border-right:6px solid #2f2f2f;}
+.user {background:#0088cc;color:#fff;align-self:flex-end;border-top-right-radius:0;}
+.user::after {content:'';position:absolute;right:-6px;top:10px;width:0;height:0;border-top:8px solid transparent;border-bottom:8px solid transparent;border-left:6px solid #0088cc;}
+.buttons {padding:10px;display:flex;justify-content:center;gap:10px;border-top:1px solid #444;background:#2c2c2c;flex-shrink:0;position:sticky;bottom:0;}
+.coin-button, .stats-button, .promo-button, .shop-button {width:120px;height:50px;background:#3a3a3a;color:#fff;border:none;border-radius:12px;font-size:16px;cursor:pointer;text-align:center;}
+.modal {display:none;position:fixed;z-index:200;left:0;top:0;width:100%;height:100%;overflow:auto;background-color:rgba(0,0,0,0.7);}
+.modal-content {background-color:#2c2c2c;margin:15% auto;padding:20px;border-radius:12px;width:80%;max-width:400px;color:#fff;}
+.modal-content input {width:100%;padding:10px;border-radius:12px;border:none;background:#3a3a3a;color:#fff;font-size:16px;margin-bottom:10px;}
+.modal-content button {padding:10px 15px;border-radius:12px;border:none;background:#0088cc;color:#fff;font-size:16px;cursor:pointer;}
 </style>
 </head>
 <body>
@@ -144,25 +37,52 @@
 <div class="chat" id="chat"></div>
 
 <div class="buttons">
-  <button class="coin-button" id="coinButton">Получить монеты</button>
+  <button class="coin-button" id="coinButton">Получить 🏆</button>
   <button class="stats-button" id="statsButton">Статистика</button>
+  <button class="promo-button" id="promoButton">Ввести промокод</button>
+  <button class="shop-button" id="shopButton">Магазин</button>
 </div>
 
-<script>
+<!-- Модалка промокода -->
+<div id="promoModal" class="modal">
+  <div class="modal-content">
+    <h3>Введите промокод</h3>
+    <input type="text" id="promoInput" placeholder="Код">
+    <button onclick="applyPromo()">Применить</button>
+  </div>
+</div>
+
+<!-- Модалка магазина -->
+<div id="shopModal" class="modal">
+  <div class="modal-content">
+    <h3>Магазин</h3>
+    <div>
+      <p>Аватарка от ИИ - 70 🏆 <button onclick="buyItem('Аватарка от ИИ', 70)">Купить</button></p>
+      <p>Аватарка на заказ - 120 🏆 <button onclick="buyItem('Аватарка на заказ', 120)">Купить</button></p>
+      <p>Дизайнерские обои на телефон - 150 🏆 <button onclick="buyItem('Дизайнерские обои на телефон', 150)">Купить</button></p>
+    </div>
+  </div>
+  </div><script>
 const chat = document.getElementById("chat");
 const coinButton = document.getElementById("coinButton");
 const statsButton = document.getElementById("statsButton");
+const promoButton = document.getElementById("promoButton");
+const shopButton = document.getElementById("shopButton");
+const promoModal = document.getElementById("promoModal");
+const promoInput = document.getElementById("promoInput");
+const shopModal = document.getElementById("shopModal");
 
 let totalCoins = parseInt(localStorage.getItem("totalCoins")) || 0;
 let awaitingReady = false;
 let nextRewardTime = localStorage.getItem("nextRewardTime") ? new Date(localStorage.getItem("nextRewardTime")) : null;
 
-function scrollChat() {
-  chat.scrollTo({
-    top: chat.scrollHeight,
-    behavior: "smooth"
-  });
-}
+const promoCodes = {
+  "ARESKOMBATSTART": 30,
+  "AUTUMNKOMBAT25": 40,
+  "SCHOOLPREMIUM01": 50
+};
+
+function scrollChat() { chat.scrollTo({ top: chat.scrollHeight, behavior: "smooth" }); }
 
 function addBotMessage(text) {
   const msg = document.createElement("div");
@@ -180,49 +100,94 @@ function addUserMessage(text) {
   scrollChat();
 }
 
+function generateRandomCode(length = 10) {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let result = '';
+  for (let i=0;i<length;i++){result += chars.charAt(Math.floor(Math.random()*chars.length));}
+  return result;
+}
+
 // Приветствие
 window.onload = () => {
   addBotMessage(`Добро пожаловать в игру Ares Kombat!`);
-  addBotMessage(`Чтобы начать зарабатывать, нажмите на команду "Получить монеты"`);
+  addBotMessage(`Чтобы начать зарабатывать, нажмите на команду "Получить 🏆"`);
 }
 
+// Кнопка "Получить 🏆"
 coinButton.addEventListener("click", () => {
   addUserMessage(coinButton.textContent);
-
   const now = new Date();
-
-  // Проверка на кулдаун (12 часов)
   if (nextRewardTime && now < nextRewardTime) {
-    const diff = Math.floor((nextRewardTime - now) / 1000);
-    const h = Math.floor(diff / 3600);
-    const m = Math.floor((diff % 3600) / 60);
-    const s = diff % 60;
+    const diff = Math.floor((nextRewardTime - now)/1000);
+    const h = Math.floor(diff/3600);
+    const m = Math.floor((diff%3600)/60);
+    const s = diff%60;
     addBotMessage(`Следующая возможность заработать будет через ${h} ч ${m} мин ${s} сек`);
     return;
   }
-
-  if (!awaitingReady) {
-    addBotMessage(`Вы получили 10 🏆 монет! Нажмите на кнопку "Готово", чтобы их получить.`);
+  if (!awaitingReady){
+    addBotMessage(`Вы получили 10 🏆! Нажмите на кнопку "Готово", чтобы их получить.`);
     coinButton.textContent = "Готово";
     awaitingReady = true;
   } else {
     totalCoins += 10;
     localStorage.setItem("totalCoins", totalCoins);
     addBotMessage("Готово!");
-    nextRewardTime = new Date(now.getTime() + 12 * 60 * 60 * 1000); // 12 часов
+    nextRewardTime = new Date(now.getTime() + 12*60*60*1000);
     localStorage.setItem("nextRewardTime", nextRewardTime);
     addBotMessage(`Следующая возможность заработать приз будет через 12 часов.`);
-    coinButton.textContent = "Получить монеты";
+    coinButton.textContent = "Получить 🏆";
     awaitingReady = false;
+
+    if (totalCoins >= 10000 && !localStorage.getItem("codeSent")) {
+      const userCode = generateRandomCode(10);
+      localStorage.setItem("codeSent", userCode);
+      addBotMessage(`🎉 Поздравляем! Вы достигли 10 000 🏆. Ваш индивидуальный код: ${userCode}`);
+    }
   }
 });
 
-// Статистика
+// Кнопка "Статистика"
 statsButton.addEventListener("click", () => {
   addUserMessage("Статистика");
-  addBotMessage(`Вы заработали ${totalCoins} 🏆 монет за всё время.`);
+  addBotMessage(`Вы заработали ${totalCoins} 🏆 за всё время.`);
 });
-</script>
 
+// Промокод
+promoButton.addEventListener("click", ()=>{promoModal.style.display="block";});
+function applyPromo(){
+  const code = promoInput.value.trim().toUpperCase();
+  promoModal.style.display="none";
+  promoInput.value="";
+  addUserMessage(`Промокод: ${code}`);
+  if(promoCodes[code]){
+    totalCoins += promoCodes[code];
+    localStorage.setItem("totalCoins", totalCoins);
+    addBotMessage(`Промокод принят! Вы получили ${promoCodes[code]} 🏆.`);
+    if (totalCoins >= 10000 && !localStorage.getItem("codeSent")) {
+      const userCode = generateRandomCode(10);
+      localStorage.setItem("codeSent", userCode);
+      addBotMessage(`🎉 Поздравляем! Вы достигли 10 000 🏆. Ваш индивидуальный код: ${userCode}`);
+    }
+  } else { addBotMessage(`Неверный промокод.`); }
+}
+
+// Магазин
+shopButton.addEventListener("click", ()=>{shopModal.style.display="block";});
+function buyItem(itemName, price){
+  if(totalCoins < price){shopModal.style.display="none"; addBotMessage(`У вас недостаточно 🏆 для покупки.`); return;}
+  totalCoins -= price; localStorage.setItem("totalCoins", totalCoins);
+  shopModal.style.display="none";
+  const receiptCode = generateRandomCode(10);
+  addBotMessage(`Поздравляем, вы купили ${itemName}. Ваш индивидуальный чек: ${receiptCode}`);
+  addBotMessage(`Сделайте скриншот, и отправьте его пользователю <a href="https://t.me/apec_sun" style="color:#0088cc;">@apec_sun</a>`);
+}
+
+// Закрытие модалок при клике вне них
+window.onclick = function(event){
+  if(event.target == promoModal){promoModal.style.display="none";}
+  if(event.target == shopModal){shopModal.style.display="none";}
+}
+</script>
 </body>
   </html>
