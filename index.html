@@ -15,19 +15,52 @@
     overflow: hidden;
   }
 
+  .header {
+    text-align: center;
+    padding: 15px 0 5px 0;
+  }
+
+  .game-title {
+    font-size: 36px;
+    font-weight: bold;
+    color: #ffffff;
+    margin: 0;
+  }
+
+  .game-subtitle {
+    font-size: 32px;
+    font-weight: bold;
+    color: #ffffff;
+    margin: 0;
+  }
+
   .content {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: calc(100% - 60px);
+    height: calc(100% - 120px);
     padding: 10px;
     text-align: center;
   }
 
+  .section-title {
+    font-size: 28px;
+    font-weight: bold;
+    color: #ffffff;
+    margin-bottom: 10px;
+  }
+
+  .score-display {
+    font-size: 36px;
+    font-weight: bold;
+    margin-bottom: 30px;
+    color: #ffffff;
+  }
+
   .bottom-menu {
     position: fixed;
-    bottom: 0;
+    bottom: 20px;
     left: 0;
     width: 100%;
     display: flex;
@@ -44,6 +77,13 @@
     color: #fff;
     font-size: 16px;
     border-radius: 10px;
+    cursor: pointer;
+  }
+
+  .bottom-menu button.active {
+    background: #ffcc00;
+    color: #000;
+    font-weight: bold;
   }
 
   .hidden {
@@ -62,10 +102,7 @@
     background: #555;
     color: #fff;
     font-size: 14px;
-  }
-
-  .profile button:active {
-    background: #777;
+    cursor: pointer;
   }
 
   .button-main {
@@ -75,7 +112,8 @@
     background: #444;
     color: #fff;
     border: none;
-    margin-top: 20px;
+    margin-top: 10px;
+    cursor: pointer;
   }
 
   .button-main:active {
@@ -123,13 +161,15 @@
     margin-top: 10px;
     cursor: pointer;
   }
-
-  .modal-content button:active {
-    background: #777;
-  }
 </style>
 </head>
 <body>
+
+<!-- Заголовок -->
+<div class="header">
+  <p class="game-title">Ares Kombat</p>
+  <p class="game-subtitle">Return</p>
+</div>
 
 <!-- Модальное окно регистрации -->
 <div id="registerModal" class="modal">
@@ -152,156 +192,197 @@
 <div class="content">
   <!-- Кликер -->
   <div id="clickerView">
-    <h2>Кликер</h2>
+    <div class="section-title">Кликер</div>
+    <div class="score-display">🏆: <span id="clickerScore">0</span></div>
     <button class="button-main" id="clickerButton">👊 Нажми!</button>
-    <div style="margin-top: 20px;">🏆: <span id="clickerScore">0</span></div>
   </div>
 
   <!-- Классический заработок -->
   <div id="classicView" class="hidden">
     <h2>Классический заработок</h2>
-    <button class="button-main" id="earnButton">Забрать 60 🏆</button>
+    <button class="button-main" id="earnButton">Забрать 1000 🏆</button>
     <p>Следующая выдача через: <span id="earnTimer">0 ч</span></p>
   </div>
 
   <!-- Профиль -->
-  <div id="profileView" class="hidden">
-    <h2>Профиль</h2>
-    <div class="profile">
-      <div>Имя: <span id="profileName"></span></div>
-      <div>Юзернейм: <span id="profileUsername"></span></div>
-      <div>ID: <span id="profileID">#001</span></div>
-      <hr>
-      <div>🏆 Заработано: <span id="profileScore">0</span></div>
-      <hr>
-      <button onclick="showMessage('В магазине пока нет товаров :(')">Магазин</button>
-      <button onclick="showMessage('Для вас пока нет заданий :(')">Задания</button>
-      <button onclick="showMessage('Мы ещё не придумали промокоды :(')">Промокоды</button>
-    </div>
+  <div id="profileView" class="hidden profile">
+    <div><b>Имя:</b> <span id="profileName"></span></div>
+    <div><b>Юзернейм:</b> <span id="profileUsername"></span></div>
+    <div><b>ID:</b> <span id="profileId"></span></div>
+    <hr>
+    <div><b>🏆:</b> <span id="profileScore">0</span></div>
+    <hr>
+    <button onclick="openModal('Магазин', 'В магазине пока нет товаров :(')">Магазин</button>
+    <button onclick="openModal('Задания', 'Для вас пока нет заданий :(')">Задания</button>
+    <button onclick="openModal('Промокоды', 'Мы ещё не придумали промокоды :(')">Промокоды</button>
   </div>
 </div>
 
+<!-- Нижнее меню -->
 <div class="bottom-menu">
-  <button onclick="showView('clickerView')">Кликер</button>
-  <button onclick="showView('classicView')">Заработок</button>
-  <button onclick="showView('profileView')">Профиль</button>
+  <button id="tabClicker" class="active">Кликер</button>
+  <button id="tabClassic">Классика</button>
+  <button id="tabProfile">Профиль</button>
 </div>
 
 <script>
-let score = parseInt(localStorage.getItem('score')) || 0;
-let lastEarnTime = parseInt(localStorage.getItem('lastEarnTime')) || 0;
-let timerInterval;
-
-// Проверка регистрации и загрузка профиля при загрузке страницы
-window.onload = function() {
-  if (!localStorage.getItem('name') || !localStorage.getItem('username')) {
-    document.getElementById('registerModal').style.display = 'flex';
-  } else {
-    loadProfile();
+  // -------------------------
+  // Функция глобальная для модальных окон
+  // -------------------------
+  function openModal(title, text) {
+    const messageModal = document.getElementById("messageModal");
+    const messageText = document.getElementById("messageText");
+    messageText.textContent = text;
+    messageModal.style.display = "flex";
   }
-  updateScore();
-  startEarnTimer();
-}
 
-// Регистрация
-document.getElementById('registerBtn').addEventListener('click', () => {
-  const name = document.getElementById('nameInput').value.trim();
-  const username = document.getElementById('usernameInput').value.trim();
-  
-  if(name && username) {
-    localStorage.setItem('name', name);
-    localStorage.setItem('username', username);
-    document.getElementById('registerModal').style.display = 'none';
-    loadProfile();
-  } else {
-    showMessage("Введите оба поля!");
-  }
-});
+  document.addEventListener("DOMContentLoaded", () => {
+    // -------------------------
+    // Переменные
+    // -------------------------
+    let score = parseInt(localStorage.getItem("score")) || 0;
+    let lastEarnTime = parseInt(localStorage.getItem("lastEarnTime")) || 0;
+    let name = localStorage.getItem("name");
+    let username = localStorage.getItem("username");
+    let userId = localStorage.getItem("userId");
 
-// Загрузка профиля
-function loadProfile() {
-  document.getElementById('profileName').textContent = localStorage.getItem('name');
-  document.getElementById('profileUsername').textContent = localStorage.getItem('username');
-}
+    const clickerScore = document.getElementById("clickerScore");
+    const profileScore = document.getElementById("profileScore");
+    const clickerButton = document.getElementById("clickerButton");
+    const earnButton = document.getElementById("earnButton");
+    const earnTimer = document.getElementById("earnTimer");
 
-// Переключение вкладок
-function showView(viewId) {
-  document.getElementById('clickerView').classList.add('hidden');
-  document.getElementById('classicView').classList.add('hidden');
-  document.getElementById('profileView').classList.add('hidden');
-  document.getElementById(viewId).classList.remove('hidden');
-}
+    const clickerView = document.getElementById("clickerView");
+    const classicView = document.getElementById("classicView");
+    const profileView = document.getElementById("profileView");
 
-// Кликер
-document.getElementById('clickerButton').addEventListener('click', () => {
-  score++;
-  saveScore();
-  updateScore();
-});
+    const tabClicker = document.getElementById("tabClicker");
+    const tabClassic = document.getElementById("tabClassic");
+    const tabProfile = document.getElementById("tabProfile");
 
-// Классический заработок
-document.getElementById('earnButton').addEventListener('click', () => {
-  const now = Date.now();
-  if (now - lastEarnTime >= 8*60*60*1000) { // 8 часов
-    score += 60;
-    lastEarnTime = now;
-    saveScore();
-    saveLastEarnTime();
-    updateScore();
-    showMessage("Вы получили 60 🏆!");
-    startEarnTimer();
-  } else {
-    showMessage("Вы уже забрали заработок. Подождите!");
-  }
-});
+    const registerModal = document.getElementById("registerModal");
+    const registerBtn = document.getElementById("registerBtn");
+    const nameInput = document.getElementById("nameInput");
+    const usernameInput = document.getElementById("usernameInput");
 
-// Обновление счета
-function updateScore() {
-  document.getElementById('clickerScore').textContent = score;
-  document.getElementById('profileScore').textContent = score;
-}
+    const closeMessageBtn = document.getElementById("closeMessageBtn");
 
-// Сохраняем счёт в localStorage
-function saveScore() {
-  localStorage.setItem('score', score);
-}
-
-// Сохраняем время последнего забора
-function saveLastEarnTime() {
-  localStorage.setItem('lastEarnTime', lastEarnTime);
-}
-
-// Таймер классического заработка
-function startEarnTimer() {
-  if (timerInterval) clearInterval(timerInterval);
-  function updateTimer() {
-    const now = Date.now();
-    const nextEarn = lastEarnTime + 8*60*60*1000;
-    let remaining = nextEarn - now;
-    if (remaining <= 0) {
-      document.getElementById('earnTimer').textContent = "0 ч";
-      clearInterval(timerInterval);
-      timerInterval = null;
-    } else {
-      const hours = Math.floor(remaining / (1000*60*60));
-      const minutes = Math.floor((remaining % (1000*60*60)) / (1000*60));
-      document.getElementById('earnTimer').textContent = `${hours} ч ${minutes} мин`;
+    // -------------------------
+    // Обновление интерфейса
+    // -------------------------
+    function updateScore() {
+      clickerScore.textContent = score;
+      profileScore.textContent = score;
+      localStorage.setItem("score", score);
     }
-  }
-  updateTimer();
-  timerInterval = setInterval(updateTimer, 1000 * 60);
-}
 
-// Модальные уведомления
-function showMessage(msg) {
-  document.getElementById('messageText').textContent = msg;
-  document.getElementById('messageModal').style.display = 'flex';
-}
+    // -------------------------
+    // Кликер
+    // -------------------------
+    clickerButton.addEventListener("click", () => {
+      score++;
+      updateScore();
+    });
 
-document.getElementById('closeMessageBtn').addEventListener('click', () => {
-  document.getElementById('messageModal').style.display = 'none';
-});
+    // -------------------------
+    // Классический заработок
+    // -------------------------
+    function updateTimer() {
+      let now = Date.now();
+      let diff = now - lastEarnTime;
+      let wait = 8 * 60 * 60 * 1000; // 8 часов
+      if (diff >= wait) {
+        earnButton.disabled = false;
+        earnTimer.textContent = "доступно!";
+      } else {
+        earnButton.disabled = true;
+        let remain = wait - diff;
+        let hours = Math.floor(remain / (1000 * 60 * 60));
+        let minutes = Math.floor((remain % (1000 * 60 * 60)) / (1000 * 60));
+        earnTimer.textContent = `${hours}ч ${minutes}м`;
+      }
+    }
+
+    earnButton.addEventListener("click", () => {
+      score += 1000;
+      lastEarnTime = Date.now();
+      localStorage.setItem("lastEarnTime", lastEarnTime);
+      updateScore();
+      updateTimer();
+    });
+
+    setInterval(updateTimer, 1000);
+    updateTimer();
+
+    // -------------------------
+    // Вкладки
+    // -------------------------
+    function showTab(tab) {
+      clickerView.classList.add("hidden");
+      classicView.classList.add("hidden");
+      profileView.classList.add("hidden");
+      tabClicker.classList.remove("active");
+      tabClassic.classList.remove("active");
+      tabProfile.classList.remove("active");
+
+      if (tab === "clicker") {
+        clickerView.classList.remove("hidden");
+        tabClicker.classList.add("active");
+      } else if (tab === "classic") {
+        classicView.classList.remove("hidden");
+        tabClassic.classList.add("active");
+      } else if (tab === "profile") {
+        profileView.classList.remove("hidden");
+        tabProfile.classList.add("active");
+      }
+    }
+
+    tabClicker.addEventListener("click", () => showTab("clicker"));
+    tabClassic.addEventListener("click", () => showTab("classic"));
+    tabProfile.addEventListener("click", () => showTab("profile"));
+
+    // -------------------------
+    // Регистрация
+    // -------------------------
+    if (!name || !username || !userId) {
+      registerModal.style.display = "flex";
+    } else {
+      document.getElementById("profileName").textContent = name;
+      document.getElementById("profileUsername").textContent = username;
+      document.getElementById("profileId").textContent = userId;
+    }
+
+    registerBtn.addEventListener("click", () => {
+      let enteredName = nameInput.value.trim();
+      let enteredUsername = usernameInput.value.trim();
+      if (!enteredName || !enteredUsername) {
+        alert("Заполните все поля!");
+        return;
+      }
+      name = enteredName;
+      username = enteredUsername;
+      userId = Math.floor(Math.random() * 1000000);
+      localStorage.setItem("name", name);
+      localStorage.setItem("username", username);
+      localStorage.setItem("userId", userId);
+      document.getElementById("profileName").textContent = name;
+      document.getElementById("profileUsername").textContent = username;
+      document.getElementById("profileId").textContent = userId;
+      registerModal.style.display = "none";
+    });
+
+    // -------------------------
+    // Закрытие сообщений
+    // -------------------------
+    closeMessageBtn.addEventListener("click", () => {
+      document.getElementById("messageModal").style.display = "none";
+    });
+
+    // -------------------------
+    // Первичная отрисовка
+    // -------------------------
+    updateScore();
+  });
 </script>
-
 </body>
   </html>
